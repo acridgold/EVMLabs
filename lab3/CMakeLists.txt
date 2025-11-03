@@ -4,12 +4,10 @@ project(lab3)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Путь к статической сборке OpenCV
 set(OpenCV_DIR "D:/NSU/MyLabs/EVMandPU/evm_lab_works/lab3/opencv/build-static")
 set(OpenCV_STATIC ON)
 set(BUILD_SHARED_LIBS OFF)
 
-# Указываем, что нужен только world-модуль
 find_package(OpenCV REQUIRED COMPONENTS world)
 
 add_executable(lab3 src/main.cpp)
@@ -17,12 +15,10 @@ add_executable(lab3 src/main.cpp)
 target_include_directories(lab3 PRIVATE ${OpenCV_INCLUDE_DIRS})
 target_link_libraries(lab3 PRIVATE ${OpenCV_LIBS})
 
-# Статическая линковка runtime для MSVC
 if(MSVC)
     set_property(TARGET lab3 PROPERTY
             MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-    # Дополнительные системные библиотеки Windows
     target_link_libraries(lab3 PRIVATE
             ws2_32
             comctl32
@@ -34,7 +30,6 @@ if(MSVC)
     )
 endif()
 
-# Для MinGW
 if(MINGW)
     target_link_options(lab3 PRIVATE
             "-static"
