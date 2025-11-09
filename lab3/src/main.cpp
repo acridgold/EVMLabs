@@ -9,7 +9,7 @@ int frameCount = 0;
 Mat currentFrame;
 
 double inputTime = 0, processTime = 0, displayTime = 0;
-double inputPercent = 0, processPercent = 0;
+double inputPercent = 0, processPercent = 0, displayPercent = 0;
 
 Mat applyFilter(const Mat& frame, int type)
 {
@@ -112,10 +112,7 @@ int main()
         flip(frame, flipped, 1);
 
         // Resize does the same
-        if (flipped.cols != 1920 || flipped.rows != 1200)
-        {
-            resize(flipped, flipped, Size(1920, 1200));
-        }
+        resize(flipped, flipped, Size(1920, 1200));
 
         // Clear memory copying needs much system time
         currentFrame = flipped.clone();
@@ -131,16 +128,13 @@ int main()
         auto t_proc_end = std::chrono::high_resolution_clock::now();
         inputTime = std::chrono::duration<double, std::milli>(t_input_end - t_input_start).count();
         processTime = std::chrono::duration<double, std::milli>(t_proc_end - t_proc_start).count();
-        double totalTime = inputTime + processTime;
-        if (totalTime > 0)
-        {
-            inputPercent = (inputTime / totalTime) * 100;
-            processPercent = (processTime / totalTime) * 100;
-        }
 
         if (selectedFilter >= 0 && selectedFilter < 3)
         {
             Mat filtered = applyFilter(flipped, selectedFilter);
+
+            auto t_display_start = std::chrono::high_resolution_clock::now();
+
             putText(filtered, "FPS: " + std::to_string((int)fps),
                         Point(20, 50), FONT_HERSHEY_SIMPLEX, 1.5,
                         Scalar(0, 255, 0), 3);
@@ -150,14 +144,16 @@ int main()
             putText(filtered, "Process: " + std::to_string((int)processTime) + "ms (" + std::to_string((int)processPercent) + "%)",
                         Point(20, 140), FONT_HERSHEY_SIMPLEX, 0.8,
                         Scalar(0, 255, 255), 2);
+            putText(filtered, "Display: " + std::to_string((int)displayTime) + "ms (" + std::to_string((int)displayPercent) + "%)",
+                        Point(20, 180), FONT_HERSHEY_SIMPLEX, 0.8,
+                        Scalar(255, 255, 0), 2);
             putText(filtered, names[selectedFilter],
-                        Point(20, 200), FONT_HERSHEY_SIMPLEX, 2,
+                        Point(20, 240), FONT_HERSHEY_SIMPLEX, 2,
                         Scalar(0, 255, 0), 3);
             putText(filtered, "Right-click to return",
                         Point(20, filtered.rows - 30),
                         FONT_HERSHEY_SIMPLEX, 1.2, Scalar(0, 255, 0), 2);
 
-            auto t_display_start = std::chrono::high_resolution_clock::now();
             imshow("Filters", filtered);
             auto t_display_end = std::chrono::high_resolution_clock::now();
             displayTime = std::chrono::duration<double, std::milli>(t_display_end - t_display_start).count();
@@ -186,6 +182,8 @@ int main()
                             Scalar(0, 255, 0), 3);
             }
 
+            auto t_display_start = std::chrono::high_resolution_clock::now();
+
             putText(grid, "FPS: " + std::to_string((int)fps),
                         Point(20, grid.rows - 30),
                         FONT_HERSHEY_SIMPLEX, 1.5, Scalar(0, 255, 0), 3);
@@ -195,11 +193,22 @@ int main()
             putText(grid, "Process: " + std::to_string((int)processTime) + "ms (" + std::to_string((int)processPercent) + "%)",
                         Point(20, grid.rows - 110),
                         FONT_HERSHEY_SIMPLEX, 0.8, Scalar(0, 255, 255), 2);
+            putText(grid, "Display: " + std::to_string((int)displayTime) + "ms (" + std::to_string((int)displayPercent) + "%)",
+                        Point(20, grid.rows - 150),
+                        FONT_HERSHEY_SIMPLEX, 0.8, Scalar(255, 255, 0), 2);
 
-            auto t_display_start = std::chrono::high_resolution_clock::now();
             imshow("Filters", grid);
             auto t_display_end = std::chrono::high_resolution_clock::now();
             displayTime = std::chrono::duration<double, std::milli>(t_display_end - t_display_start).count();
+        }
+
+        // Пересчёт процентов с учётом displayTime
+        double totalTime = inputTime + processTime + displayTime;
+        if (totalTime > 0)
+        {
+            inputPercent = (inputTime / totalTime) * 100;
+            processPercent = (processTime / totalTime) * 100;
+            displayPercent = (displayTime / totalTime) * 100;
         }
 
         if ((char)waitKey(1) == 27) {
