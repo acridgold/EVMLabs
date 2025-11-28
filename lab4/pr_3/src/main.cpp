@@ -71,9 +71,9 @@ int main()
     for (int m = 1; m <= M; m++)
     {
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                    N, N, N, 1.0f, Rn.data(), N, R.data(), N, 0.0f, temp.data(), N);
-        Rn = temp;
-        cblas_saxpy(N * N, 1.0f, Rn.data(), 1, Sum.data(), 1);
+        N, N, N, 1.0f, Rn.data(), N, R.data(), N, 0.0f, temp.data(), N); //temp=Rn×R
+        Rn = temp; //Rn=R^m
+        cblas_saxpy(N * N, 1.0f, Rn.data(), 1, Sum.data(), 1); // Sum=Sum+Rn
     }
 
     // A^(-1) = Sum * B
