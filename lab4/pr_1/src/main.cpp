@@ -84,7 +84,7 @@ int main() {
     int M = 10;
 
     // Инициализация матрицы A
-    vector<vector<float>> A(N, vector<float>(N));
+    vector A(N, vector<float>(N));
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++)
             A[i][j] = (i == j) ? 2.0f : 0.1f;
@@ -92,38 +92,38 @@ int main() {
     auto start = chrono::high_resolution_clock::now();
 
     // Вычисление B = A^T / (||A||_1 * ||A||_inf)
-    vector<vector<float>> AT(N, vector<float>(N));
+    vector AT(N, vector<float>(N));
     transpose(A, AT, N);
     float n1 = norm1(A, N);
     float ninf = normInf(A, N);
     float scalar = 1.0f / (n1 * ninf);
 
-    vector<vector<float>> B(N, vector<float>(N));
+    vector B(N, vector<float>(N));
     matscal(AT, scalar, B, N);
 
     // R = I - BA
-    vector<vector<float>> I(N, vector<float>(N));
-    vector<vector<float>> BA(N, vector<float>(N));
-    vector<vector<float>> R(N, vector<float>(N));
+    vector I(N, vector<float>(N));
+    vector BA(N, vector<float>(N));
+    vector R(N, vector<float>(N));
     Identity(I, N);
     matmul(B, A, BA, N);
     matsub(I, BA, R, N);
 
     // Вычисление суммы ряда: Sum = I + R + R^2 + ...
-    vector<vector<float>> Sum(N, vector<float>(N));
-    vector<vector<float>> Rn(N, vector<float>(N));
+    vector Sum(N, vector<float>(N));
+    vector Rn(N, vector<float>(N));
     Identity(Sum, N);  // Sum = I
     Identity(Rn, N);   // R^0 = I
 
     for (int m = 1; m <= M; m++) {
-        vector<vector<float>> temp(N, vector<float>(N));
+        vector temp(N, vector<float>(N));
         matmul(Rn, R, temp, N);  // R^n = R^(n-1) * R
         Rn = temp;
         matadd(Sum, Rn, Sum, N);  // Sum += R^n
     }
 
     // A^(-1) = Sum * B
-    vector<vector<float>> Ainv(N, vector<float>(N));
+    vector Ainv(N, vector<float>(N));
     matmul(Sum, B, Ainv, N);
 
     auto end = chrono::high_resolution_clock::now();
