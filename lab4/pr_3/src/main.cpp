@@ -5,6 +5,10 @@
 #include <chrono>
 using namespace std;
 
+/*
+ * remember: cblas_sgemm uses formula C=αAB+βC
+ */
+
 float norm1(const float* A, int N)
 {
     float maxSum = 0;
