@@ -5,16 +5,19 @@
 using namespace std;
 
 // Транспонирование
-void transpose(const vector<vector<float>>& A, vector<vector<float>>& AT, int N) {
+void transpose(const vector<vector<float>>& A, vector<vector<float>>& AT, int N)
+{
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++)
             AT[j][i] = A[i][j];
 }
 
 // Норма ||A||_1
-float norm1(const vector<vector<float>>& A, int N) {
+float norm1(const vector<vector<float>>& A, int N)
+{
     float maxSum = 0;
-    for (int j = 0; j < N; j++) {
+    for (int j = 0; j < N; j++)
+    {
         float sum = 0;
         for (int i = 0; i < N; i++)
             sum += fabs(A[i][j]);
@@ -24,9 +27,11 @@ float norm1(const vector<vector<float>>& A, int N) {
 }
 
 // Норма ||A||_inf
-float normInf(const vector<vector<float>>& A, int N) {
+float normInf(const vector<vector<float>>& A, int N)
+{
     float maxSum = 0;
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < N; i++)
+    {
         float sum = 0;
         for (int j = 0; j < N; j++)
             sum += fabs(A[i][j]);
@@ -37,7 +42,8 @@ float normInf(const vector<vector<float>>& A, int N) {
 
 // Умножение матриц C = A * B (оптимизированный порядок i-k-j)
 void matmul(const vector<vector<float>>& A, const vector<vector<float>>& B,
-            vector<vector<float>>& C, int N) {
+            vector<vector<float>>& C, int N)
+{
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++)
             C[i][j] = 0;
@@ -50,7 +56,8 @@ void matmul(const vector<vector<float>>& A, const vector<vector<float>>& B,
 
 // Умножение матрицы на скаляр
 void matscal(const vector<vector<float>>& A, float s,
-             vector<vector<float>>& C, int N) {
+             vector<vector<float>>& C, int N)
+{
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++)
             C[i][j] = A[i][j] * s;
@@ -58,14 +65,16 @@ void matscal(const vector<vector<float>>& A, float s,
 
 // Сложение матриц C = A + B
 void matadd(const vector<vector<float>>& A, const vector<vector<float>>& B,
-            vector<vector<float>>& C, int N) {
+            vector<vector<float>>& C, int N)
+{
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++)
             C[i][j] = A[i][j] + B[i][j];
 }
 
 // Единичная матрица
-void Identity(vector<vector<float>>& I, int N) {
+void Identity(vector<vector<float>>& I, int N)
+{
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++)
             I[i][j] = (i == j) ? 1.0f : 0.0f;
@@ -73,13 +82,15 @@ void Identity(vector<vector<float>>& I, int N) {
 
 // Вычитание матриц C = A - B
 void matsub(const vector<vector<float>>& A, const vector<vector<float>>& B,
-            vector<vector<float>>& C, int N) {
+            vector<vector<float>>& C, int N)
+{
     for (int i = 0; i < N; i++)
         for (int j = 0; j < N; j++)
             C[i][j] = A[i][j] - B[i][j];
 }
 
-int main() {
+int main()
+{
     int N = 1024;
     int M = 10;
 
@@ -112,14 +123,15 @@ int main() {
     // Вычисление суммы ряда: Sum = I + R + R^2 + ...
     vector Sum(N, vector<float>(N));
     vector Rn(N, vector<float>(N));
-    Identity(Sum, N);  // Sum = I
-    Identity(Rn, N);   // R^0 = I
+    Identity(Sum, N); // Sum = I
+    Identity(Rn, N); // R^0 = I
 
-    for (int m = 1; m <= M; m++) {
+    for (int m = 1; m <= M; m++)
+    {
         vector temp(N, vector<float>(N));
-        matmul(Rn, R, temp, N);  // R^n = R^(n-1) * R
+        matmul(Rn, R, temp, N); // R^n = R^(n-1) * R
         Rn = temp;
-        matadd(Sum, Rn, Sum, N);  // Sum += R^n
+        matadd(Sum, Rn, Sum, N); // Sum += R^n
     }
 
     // A^(-1) = Sum * B
@@ -130,15 +142,16 @@ int main() {
 
     // Вывод результата
     cout << "Inverse elements:\n";
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++)
+    {
         for (int j = 0; j < 3; j++)
             cout << Ainv[i][j] << " ";
         cout << "\n";
     }
 
     cout << "time: "
-         << chrono::duration_cast<chrono::milliseconds>(end - start).count()
-         << " ms\n";
+        << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+        << " ms\n";
 
     return 0;
 }
