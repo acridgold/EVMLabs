@@ -91,7 +91,7 @@ void matsub(const vector<vector<float>>& A, const vector<vector<float>>& B,
 
 int main()
 {
-    int N = 1024;
+    int N = 2048;
     int M = 10;
 
     // Инициализация матрицы A
