@@ -50,7 +50,7 @@ void matmul_sse(const vector<vector<float>>& A, const vector<vector<float>>& B,
 
     // Транспонируем B для доступа к столбцам
     vector BT(N, vector<float>(N));
-    transpose(B, BT, N);
+   // transpose(B, BT, N);
 
     for (int i = 0; i < N; i++)
     {
@@ -62,7 +62,7 @@ void matmul_sse(const vector<vector<float>>& A, const vector<vector<float>>& B,
             for (; k <= N - 4; k += 4)
             {
                 __m128 av = _mm_loadu_ps(&A[i][k]);      // A[i][k..k+3]
-                __m128 bv = _mm_loadu_ps(&BT[j][k]);     // B^T[j][k..k+3] = B[k..k+3][j]
+                __m128 bv = _mm_loadu_ps(&B[k][j]);     // B^T[j][k..k+3] = B[k..k+3][j]
                 sum = _mm_add_ps(sum, _mm_mul_ps(av, bv));
             }
 
